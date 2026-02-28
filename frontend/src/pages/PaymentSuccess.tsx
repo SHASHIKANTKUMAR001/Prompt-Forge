@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { useCredits } from "@/hooks/useCredits";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
@@ -20,15 +22,25 @@ export default function PaymentSuccess() {
       return;
     }
 
+    if (!API_URL) {
+      console.error("VITE_API_URL not configured");
+      setStatus("error");
+      return;
+    }
+
     const verify = async () => {
       try {
-        const res = await fetch(`/api/verify-payment?session_id=${sessionId}`);
+        const res = await fetch(
+          `${API_URL}/api/verify-payment?session_id=${sessionId}`
+        );
+
         if (!res.ok) {
           setStatus("error");
           return;
         }
 
         const data = await res.json();
+
         if (!data.success) {
           setStatus("error");
           return;
@@ -56,6 +68,7 @@ export default function PaymentSuccess() {
             <h1 className="text-2xl font-bold">Verifying your payment...</h1>
           </>
         )}
+
         {status === "success" && (
           <>
             <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
@@ -68,6 +81,7 @@ export default function PaymentSuccess() {
             </Button>
           </>
         )}
+
         {status === "error" && (
           <>
             <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
