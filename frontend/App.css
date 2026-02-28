@@ -1,0 +1,46 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: #fff;   /* solid white background */
+  color: #000;              /* black text */
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+.logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25); /* neutral shadow */
+}
+
+/* Remove colored glow */
+.logo.react:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Optional: keep spin animation if you like */
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2); /* strong shadow for depth */
+  border-radius: 8px;
+}
+
+.read-the-docs {
+  color: #555; /* neutral gray instead of #888 */
+}
