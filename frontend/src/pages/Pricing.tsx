@@ -17,6 +17,8 @@ import { toast } from "sonner";
 import { useCredits } from "@/hooks/useCredits";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const PLANS = [
   {
     id: "free",
@@ -86,20 +88,36 @@ export default function Pricing() {
       return;
     }
 
+    if (!API_URL) {
+      toast.error("API URL not configured.");
+      return;
+    }
+
     setLoadingPlan(plan.id);
+
     try {
-      const res = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clerkUserId: user.id,
-          planId: plan.id,
-        }),
-      });
+      const res = await fetch(
+        `${API_URL}/api/create-checkout-session`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            clerkUserId: user.id,
+            planId: plan.id,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
 
       const data = await res.json();
+
       if (data?.url) {
         window.location.href = data.url; // redirect to Stripe Checkout
+      } else {
+        toast.error("Failed to start checkout.");
       }
     } catch (err) {
       console.error("Checkout error:", err);
@@ -142,6 +160,7 @@ export default function Pricing() {
                   Most Popular
                 </Badge>
               )}
+
               <CardHeader className="text-center pb-2">
                 <div className="flex justify-center mb-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
@@ -151,6 +170,7 @@ export default function Pricing() {
                 <CardTitle className="text-2xl">{plan.name}</CardTitle>
                 <CardDescription>{plan.description}</CardDescription>
               </CardHeader>
+
               <CardContent className="flex-1">
                 <div className="text-center mb-6">
                   <span className="text-4xl font-bold">
@@ -165,6 +185,7 @@ export default function Pricing() {
                     {plan.credits} credits
                   </p>
                 </div>
+
                 <ul className="space-y-3">
                   {plan.features.map((feature) => (
                     <li
@@ -177,6 +198,7 @@ export default function Pricing() {
                   ))}
                 </ul>
               </CardContent>
+
               <CardFooter>
                 <Button
                   className="w-full"
